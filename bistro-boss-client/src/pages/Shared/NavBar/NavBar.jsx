@@ -1,12 +1,36 @@
 import {Link} from "react-router-dom";
+import {useContext} from "react";
+import {AuthContext} from "../../../Provider/AuthProvider.jsx";
+import Swal from 'sweetalert2'
 
 const NavBar = () => {
+    const {user, logOut} = useContext(AuthContext);
+
+    const handelLogout = () =>{
+        logOut()
+            .then(() => {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    title: 'You are loged out',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }).catch((error) => {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'warning',
+                    title: 'Something is wrong',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            });
+    }
 
     const navOptions = <>
         <li><Link to={'/'}>Home</Link></li>
         <li><Link to={'/manu'}>Manu</Link></li>
         <li><Link to={'/shop'}>Shop</Link></li>
-        <li><Link to={'/login'}>Login</Link></li>
     </>
 
     return (
@@ -29,7 +53,17 @@ const NavBar = () => {
                     </ul>
                 </div>
                 <div className="navbar-end">
-                    <a className="btn">Get started</a>
+                    {
+                        user ?
+                            <>
+                                <img src={user?.photoURL} alt="profile_img" className="w-12 h-12 rounded-full mr-4"/>
+                                <button onClick={handelLogout}>Logout</button>
+                            </>
+                            :
+                            <>
+                                <Link to={'/login'}>Login</Link>
+                            </>
+                    }
                 </div>
             </div>
         </>

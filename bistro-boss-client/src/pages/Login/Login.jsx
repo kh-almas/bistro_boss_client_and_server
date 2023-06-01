@@ -1,7 +1,11 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import { loadCaptchaEnginge, LoadCanvasTemplate, LoadCanvasTemplateNoReload, validateCaptcha } from 'react-simple-captcha';
+import {Link} from "react-router-dom";
+import {AuthContext} from "../../Provider/AuthProvider.jsx";
+import Swal from 'sweetalert2'
 
 const Login = () => {
+    const {signIn} = useContext(AuthContext);
     const [showPassword, setShowPassword] = useState(false);
     const [disable, setDisable] = useState(true);
 
@@ -16,6 +20,8 @@ const Login = () => {
             if (validateCaptcha(captchaValue)) {
                 console.log('Captcha Matched');
                 setDisable(false);
+            }else{
+                setDisable(true);
             }
         }
     }
@@ -24,6 +30,26 @@ const Login = () => {
         const form = e.target;
         const email = form.email.value;
         const password = form.password.value;
+
+        signIn(email, password)
+            .then((userCredential) => {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    title: 'Profile created',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            })
+            .catch((error) => {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'warning',
+                    title: 'Something is wrong',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            });
     }
     return (
         <div className="hero min-h-screen bg-base-200">
@@ -61,6 +87,7 @@ const Login = () => {
                                 <button type="submit" className="btn btn-primary" disabled={disable}>Login</button>
                             </div>
                         </form>
+                        <p>Don't have any account <Link to={'/registration'}>Registration</Link></p>
                     </div>
                 </div>
             </div>
