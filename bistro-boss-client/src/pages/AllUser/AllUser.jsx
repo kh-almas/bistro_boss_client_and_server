@@ -2,10 +2,39 @@ import React from 'react';
 import {Helmet} from "react-helmet";
 import {FaTrashAlt, FaIdCardAlt} from "react-icons/fa";
 import useUserInAdmin from "../../Hooks/useUserInAdmin.jsx";
+import Swal from "sweetalert2";
 
 const AllUser = () => {
     const [user, refetch] = useUserInAdmin();
-    console.log(user);
+    const handelDelete = id => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Wanna remove this user?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`http://localhost:3000/user/${id}`, {
+                    method: "DELETE"
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data.deletedCount > 0){
+                            refetch();
+                            Swal.fire(
+                                'Deleted!',
+                                'User has been deleted.',
+                                'success'
+                            )
+                        }
+                    })
+
+            }
+        })
+    }
     return (
         <>
             <Helmet>
@@ -13,7 +42,7 @@ const AllUser = () => {
             </Helmet>
             <div className="p-16">
                 <div className="mb-12">
-                    <h3>Total User: </h3>
+                    <h3>Total User: {user.length}</h3>
                 </div>
                 <div>
                     <div className="overflow-x-auto">
