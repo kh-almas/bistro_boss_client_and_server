@@ -1,10 +1,13 @@
 import {Link} from "react-router-dom";
 import {useContext} from "react";
 import {AuthContext} from "../../../Provider/AuthProvider.jsx";
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
+import { FaShoppingCart } from 'react-icons/fa';
+import useCart from "../../../Hooks/useCart.jsx";
 
 const NavBar = () => {
     const {user, logOut} = useContext(AuthContext);
+    const [isLoading, refetch, isError, cart, error] = useCart();
 
     const handelLogout = () =>{
         logOut()
@@ -56,8 +59,14 @@ const NavBar = () => {
                     {
                         user ?
                             <>
-                                <img src={user?.photoURL} alt="profile_img" className="w-12 h-12 rounded-full mr-4"/>
-                                <button onClick={handelLogout}>Logout</button>
+                                {/*<img src={user?.photoURL} alt="profile_img" className="w-12 h-12 rounded-full mr-4"/>*/}
+                                <button onClick={handelLogout} className="mr-4">Logout</button>
+                                <Link to={'/dashboard/cart'}>
+                                    <button className="btn">
+                                        <FaShoppingCart className="text-lg mr-1"></FaShoppingCart>
+                                        <div className="badge">{cart?.length || 0}</div>
+                                    </button>
+                                </Link>
                             </>
                             :
                             <>

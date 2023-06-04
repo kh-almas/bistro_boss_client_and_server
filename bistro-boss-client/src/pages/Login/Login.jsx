@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import { loadCaptchaEnginge, LoadCanvasTemplate, LoadCanvasTemplateNoReload, validateCaptcha } from 'react-simple-captcha';
-import {Link} from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import {AuthContext} from "../../Provider/AuthProvider.jsx";
 import Swal from 'sweetalert2'
 
@@ -8,6 +8,10 @@ const Login = () => {
     const {signIn} = useContext(AuthContext);
     const [showPassword, setShowPassword] = useState(false);
     const [disable, setDisable] = useState(true);
+    const location = useLocation();
+    const navigate = useNavigate();
+    const redirect = location.state?.from?.pathname || '/';
+    console.log(location.state?.from?.pathname)
 
     useEffect(() => {
         loadCaptchaEnginge(6);
@@ -33,6 +37,7 @@ const Login = () => {
 
         signIn(email, password)
             .then((userCredential) => {
+                navigate(redirect);
                 Swal.fire({
                     position: 'center',
                     icon: 'success',
@@ -84,7 +89,8 @@ const Login = () => {
                                 <input onChange={checkCaptcha} type="text" name="captcha" placeholder="captcha" className="input input-bordered" />
                             </div>
                             <div className="form-control mt-6">
-                                <button type="submit" className="btn btn-primary" disabled={disable}>Login</button>
+                                <button type="submit" className="btn btn-primary" >Login</button>
+                                {/*disabled={disable}*/}
                             </div>
                         </form>
                         <p>Don't have any account <Link to={'/registration'}>Registration</Link></p>
