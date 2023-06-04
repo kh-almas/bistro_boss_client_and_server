@@ -1,15 +1,16 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {LoadCanvasTemplate, loadCaptchaEnginge, validateCaptcha} from "react-simple-captcha";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {useForm} from "react-hook-form";
 import {AuthContext} from "../../Provider/AuthProvider.jsx";
 import Swal from 'sweetalert2'
 
 const Register = () => {
     const {createUser, updateUSerProfile} = useContext(AuthContext);
-    const { register, handleSubmit, watch, formState: { errors } } = useForm();
+    const { register, handleSubmit, reset, watch, formState: { errors } } = useForm();
     const [showPassword, setShowPassword] = useState(false);
-    const [disable, setDisable] = useState(true);
+    const [disable, setDisable] = useState(false);
+    const navigate = useNavigate();
 
     const checkCaptcha = (e) => {
         const captchaValue = e.target.value;
@@ -34,13 +35,30 @@ const Register = () => {
                 const user = userCredential.user;
                 updateUSerProfile(user, data.name, data.img)
                     .then(() => {
-                        Swal.fire({
-                            position: 'center',
-                            icon: 'success',
-                            title: 'Profile created',
-                            showConfirmButton: false,
-                            timer: 1500
+                        const UserInfo = {name: data.name, email: data.email, image: data.img}
+                        fetch(`http://localhost:3000/users`, {
+                            method: 'POST',
+                            headers:{
+                                'content-type' : 'application/json',
+                            },
+                            body: JSON.stringify(UserInfo),
                         })
+                            .then(res => res.json())
+                            .then(data => {
+                                console.log(data)
+                                if(data.insertedId)
+                                {
+                                    reset();
+                                    Swal.fire({
+                                        position: 'center',
+                                        icon: 'success',
+                                        title: 'Profile created',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    })
+                                    navigate('/');
+                                }
+                            })
                     }).catch((error) => {
                         Swal.fire({
                             position: 'center',

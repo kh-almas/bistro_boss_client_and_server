@@ -59,7 +59,7 @@ const NavBar = () => {
                     {
                         user ?
                             <>
-                                {/*<img src={user?.photoURL} alt="profile_img" className="w-12 h-12 rounded-full mr-4"/>*/}
+                                <img src={user?.photoURL} alt="profile_img" className="w-12 h-12 rounded-full mr-4"/>
                                 <button onClick={handelLogout} className="mr-4">Logout</button>
                                 <Link to={'/dashboard/cart'}>
                                     <button className="btn">

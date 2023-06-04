@@ -2,12 +2,41 @@ import React from 'react';
 import {Helmet} from "react-helmet";
 import useCart from "../../../Hooks/useCart.jsx";
 import { FaTrashAlt } from "react-icons/fa";
+import Swal from "sweetalert2";
 
 const MyCart = () => {
     const [isLoading, refetch, isError, cart, error] = useCart();
     console.log(cart);
     const totalPrice = cart.reduce((total, item) => total + item.price, 0);
-    console.log(totalPrice);
+    const handelDelete = id => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Wanna remove this item?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`http://localhost:3000/cart/${id}`, {
+                    method: "DELETE"
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data.deletedCount > 0){
+                            refetch();
+                            Swal.fire(
+                                'Deleted!',
+                                'Your file has been deleted.',
+                                'success'
+                            )
+                        }
+                    })
+
+            }
+        })
+    }
     return (
         <>
             <Helmet>
@@ -58,7 +87,7 @@ const MyCart = () => {
                                             {item.price}
                                         </td>
                                         <th>
-                                            <button className="btn btn-ghost btn-sm"><FaTrashAlt></FaTrashAlt></button>
+                                            <button onClick={() => handelDelete(item._id)} className="btn btn-ghost btn-sm"><FaTrashAlt></FaTrashAlt></button>
                                         </th>
                                     </tr>
                                 )

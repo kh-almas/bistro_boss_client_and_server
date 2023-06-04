@@ -6,7 +6,7 @@ const useCart = () => {
     const {user, loading} = useContext(AuthContext);
 
     const { isLoading, refetch, isError, data : cart = [], error } = useQuery({
-        queryKey: ['todos'],
+        queryKey: ['cart', user?.email],
         enabled:!loading,
         queryFn: async () => {
             const response = await fetch(`http://localhost:3000/carts?email=${user?.email}`);
