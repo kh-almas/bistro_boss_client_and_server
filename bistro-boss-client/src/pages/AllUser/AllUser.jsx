@@ -35,6 +35,35 @@ const AllUser = () => {
             }
         })
     }
+    const handelRoleUpdate = id => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Wanna remove this user?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Update this user role to admin'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`http://localhost:3000/user/role/${id}`, {
+                    method: "PATCH"
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data.modifiedCount > 0){
+                            refetch();
+                            Swal.fire(
+                                'Updated!',
+                                'User role change to admin',
+                                'success'
+                            )
+                        }
+                    })
+
+            }
+        })
+    }
     return (
         <>
             <Helmet>
@@ -53,6 +82,7 @@ const AllUser = () => {
                                 <th>Image</th>
                                 <th>Name</th>
                                 <th>Email</th>
+                                <th>Role</th>
                                 <th>Action</th>
                             </tr>
                             </thead>
@@ -76,10 +106,18 @@ const AllUser = () => {
                                         <td>
                                             {item.email}
                                         </td>
-                                        <th>
-                                            <button onClick={() => handelDelete(item._id)} className="btn btn-ghost btn-sm"><FaIdCardAlt></FaIdCardAlt></button>
+                                        <td>
+                                            {
+                                                item.role !== 'admin' ?
+                                                    <>
+                                                        <button onClick={() => handelRoleUpdate(item._id)} className="btn btn-ghost btn-sm"><FaIdCardAlt></FaIdCardAlt></button>
+                                                    </>
+                                                    : <>Admin</>
+                                            }
+                                        </td>
+                                        <td>
                                             <button onClick={() => handelDelete(item._id)} className="btn btn-ghost btn-sm"><FaTrashAlt></FaTrashAlt></button>
-                                        </th>
+                                        </td>
                                     </tr>
                                 )
                             }
